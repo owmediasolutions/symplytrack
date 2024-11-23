@@ -8,6 +8,7 @@ if (!apiKey) {
 
 const openai = new OpenAI({
   apiKey: apiKey || 'dummy-key',
+  dangerouslyAllowBrowser: true // Enable browser usage
 });
 
 export const handleChatRequest = async (message, supplements, symptoms) => {
