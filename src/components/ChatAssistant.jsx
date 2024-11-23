@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { handleChatRequest } from "../api/chat";
 
 const ChatAssistant = ({ supplements, symptoms }) => {
   const [messages, setMessages] = useState([]);
@@ -19,23 +20,12 @@ const ChatAssistant = ({ supplements, symptoms }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userMessage,
-          supplements,
-          symptoms,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Fehler bei der Kommunikation mit dem Assistenten");
-
-      const data = await response.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
+      const response = await handleChatRequest(userMessage, supplements, symptoms);
+      console.log('Chat response received:', response);
+      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
     } catch (error) {
+      console.error('Chat error:', error);
       toast.error("Entschuldigung, es gab einen Fehler bei der Verarbeitung Ihrer Anfrage");
-      console.error("Chat error:", error);
     } finally {
       setIsLoading(false);
     }
