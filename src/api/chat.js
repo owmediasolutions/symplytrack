@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
 
-const apiKey = import.meta.env.OPENAI_API_KEY;
+const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 if (!apiKey) {
-  console.error('OpenAI API Key fehlt oder ist nicht korrekt konfiguriert. Bitte .env Datei mit einem gültigen OPENAI_API_KEY erstellen.');
+  console.error('OpenAI API Key fehlt oder ist nicht korrekt konfiguriert. Bitte .env Datei mit einem gültigen VITE_OPENAI_API_KEY erstellen.');
   throw new Error('OpenAI API Key nicht korrekt konfiguriert');
 }
 
