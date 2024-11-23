@@ -17,7 +17,7 @@ export const handleChatRequest = async (message, supplements, symptoms) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4", // Korrigiert von "gpt-4o" zu "gpt-4"
       messages: [
         {
           role: "system",
