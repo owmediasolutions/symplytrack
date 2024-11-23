@@ -2,14 +2,14 @@ import OpenAI from 'openai';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-if (!apiKey) {
-  console.error('OpenAI API Key fehlt. Bitte .env Datei mit VITE_OPENAI_API_KEY erstellen.');
-  throw new Error('OpenAI API Key nicht konfiguriert');
+if (!apiKey || apiKey === 'your_openai_api_key_here') {
+  console.error('OpenAI API Key fehlt oder ist nicht korrekt konfiguriert. Bitte .env Datei mit einem gültigen VITE_OPENAI_API_KEY erstellen.');
+  throw new Error('OpenAI API Key nicht korrekt konfiguriert');
 }
 
 const openai = new OpenAI({
   apiKey: apiKey,
-  dangerouslyAllowBrowser: true // Enable browser usage
+  dangerouslyAllowBrowser: true
 });
 
 export const handleChatRequest = async (message, supplements, symptoms) => {
@@ -38,6 +38,9 @@ export const handleChatRequest = async (message, supplements, symptoms) => {
     return response.choices[0].message.content;
   } catch (error) {
     console.error('Error in chat request:', error);
+    if (error.response) {
+      console.error('OpenAI API Error:', error.response.data);
+    }
     throw new Error('Fehler bei der Kommunikation mit dem KI-Assistenten');
   }
 };
