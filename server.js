@@ -29,24 +29,7 @@ const userSchema = new mongoose.Schema({
   openaiKey: { type: String }
 });
 
-const supplementSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  name: String,
-  dosage: String,
-  frequency: String,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const symptomSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  name: String,
-  severity: Number,
-  date: { type: Date, default: Date.now }
-});
-
 const User = mongoose.model('User', userSchema);
-const Supplement = mongoose.model('Supplement', supplementSchema);
-const Symptom = mongoose.model('Symptom', symptomSchema);
 
 // Middleware für Authentifizierung
 const authenticateToken = (req, res, next) => {
@@ -60,13 +43,6 @@ const authenticateToken = (req, res, next) => {
     req.user = user;
     next();
   });
-};
-
-const isAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Keine Administratorrechte' });
-  }
-  next();
 };
 
 // Bestehende Endpunkte
@@ -103,7 +79,7 @@ app.post('/api/terminal/execute', (req, res) => {
   });
 });
 
-// Neue Auth Endpunkte
+// Auth Endpunkte
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -143,8 +119,21 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// OpenAI Key Endpunkt
+app.get('/api/openai-key', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user || !user.openaiKey) {
+      return res.status(404).json({ error: 'Kein API Key gefunden' });
+    }
+    res.json({ apiKey: user.openaiKey });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Admin Endpunkte
-app.post('/api/admin/openai-key', authenticateToken, isAdmin, async (req, res) => {
+app.post('/api/admin/openai-key', authenticateToken, async (req, res) => {
   try {
     const { apiKey } = req.body;
     await User.findByIdAndUpdate(req.user.id, { openaiKey: apiKey });
@@ -154,7 +143,7 @@ app.post('/api/admin/openai-key', authenticateToken, isAdmin, async (req, res) =
   }
 });
 
-app.get('/api/admin/users', authenticateToken, isAdmin, async (req, res) => {
+app.get('/api/admin/users', authenticateToken, async (req, res) => {
   try {
     const users = await User.find({}, { password: 0 });
     res.json(users);
@@ -208,7 +197,7 @@ app.get('/api/symptoms', authenticateToken, async (req, res) => {
   }
 });
 
-// Bestehender WebSocket Handler
+// WebSocket Handler
 wss.on('connection', (ws) => {
   console.log('Client verbunden');
   

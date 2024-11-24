@@ -1,22 +1,46 @@
 import OpenAI from 'openai';
 
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+let openaiInstance = null;
 
-if (!apiKey || !apiKey.startsWith('sk-')) {
-  console.error('OpenAI API Key fehlt oder ist ungültig. Bitte stellen Sie sicher, dass die .env Datei einen gültigen VITE_OPENAI_API_KEY enthält.');
-  throw new Error('OpenAI API Key nicht korrekt konfiguriert. Der Key muss mit "sk-" beginnen.');
-}
+const initializeOpenAI = async () => {
+  try {
+    const response = await fetch('/api/openai-key', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('API Key konnte nicht abgerufen werden');
+    }
 
-const openai = new OpenAI({
-  apiKey: apiKey,
-  dangerouslyAllowBrowser: true
-});
+    const { apiKey } = await response.json();
+    
+    if (!apiKey || !apiKey.startsWith('sk-')) {
+      throw new Error('Ungültiger OpenAI API Key');
+    }
+
+    openaiInstance = new OpenAI({
+      apiKey: apiKey,
+      dangerouslyAllowBrowser: true
+    });
+
+    return openaiInstance;
+  } catch (error) {
+    console.error('Fehler beim Initialisieren von OpenAI:', error);
+    throw new Error('OpenAI API Key nicht korrekt konfiguriert');
+  }
+};
 
 export const handleChatRequest = async (message, supplements, symptoms) => {
   console.log('Processing chat request:', { message, supplements, symptoms });
 
   try {
-    const response = await openai.chat.completions.create({
+    if (!openaiInstance) {
+      await initializeOpenAI();
+    }
+
+    const response = await openaiInstance.chat.completions.create({
       model: "gpt-4",
       messages: [
         {
