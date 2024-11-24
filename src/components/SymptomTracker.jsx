@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,29 @@ const SymptomTracker = ({ symptoms, setSymptoms }) => {
   const [symptom, setSymptom] = useState("");
   const [intensity, setIntensity] = useState([5]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    fetchSymptoms();
+  }, []);
+
+  const fetchSymptoms = async () => {
+    try {
+      const response = await fetch('/api/symptoms', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSymptoms(data);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Symptome:', error);
+      toast.error('Symptome konnten nicht geladen werden');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!symptom) {
       toast.error("Bitte geben Sie ein Symptom ein");
@@ -17,16 +39,33 @@ const SymptomTracker = ({ symptoms, setSymptoms }) => {
     }
 
     const newSymptom = {
-      id: Date.now(),
       name: symptom,
       intensity: intensity[0],
-      date: new Date().toISOString(),
     };
 
-    setSymptoms([...symptoms, newSymptom]);
-    toast.success("Symptom hinzugefügt");
-    setSymptom("");
-    setIntensity([5]);
+    try {
+      const response = await fetch('/api/symptoms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(newSymptom)
+      });
+
+      if (response.ok) {
+        const savedSymptom = await response.json();
+        setSymptoms([...symptoms, savedSymptom]);
+        toast.success("Symptom hinzugefügt");
+        setSymptom("");
+        setIntensity([5]);
+      } else {
+        toast.error("Fehler beim Speichern des Symptoms");
+      }
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      toast.error("Fehler beim Speichern des Symptoms");
+    }
   };
 
   return (

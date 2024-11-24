@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,29 @@ const SupplementTracker = ({ supplements, setSupplements }) => {
   const [dose, setDose] = useState("");
   const [unit, setUnit] = useState("mg");
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    fetchSupplements();
+  }, []);
+
+  const fetchSupplements = async () => {
+    try {
+      const response = await fetch('/api/supplements', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSupplements(data);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Supplements:', error);
+      toast.error('Supplements konnten nicht geladen werden');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !dose) {
       toast.error("Bitte füllen Sie alle Felder aus");
@@ -17,16 +39,33 @@ const SupplementTracker = ({ supplements, setSupplements }) => {
     }
 
     const newSupplement = {
-      id: Date.now(),
       name,
       dose: `${dose}${unit}`,
-      date: new Date().toISOString(),
     };
 
-    setSupplements([...supplements, newSupplement]);
-    toast.success("Supplement hinzugefügt");
-    setName("");
-    setDose("");
+    try {
+      const response = await fetch('/api/supplements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(newSupplement)
+      });
+
+      if (response.ok) {
+        const savedSupplement = await response.json();
+        setSupplements([...supplements, savedSupplement]);
+        toast.success("Supplement hinzugefügt");
+        setName("");
+        setDose("");
+      } else {
+        toast.error("Fehler beim Speichern des Supplements");
+      }
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      toast.error("Fehler beim Speichern des Supplements");
+    }
   };
 
   return (

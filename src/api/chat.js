@@ -15,11 +15,8 @@ const initializeOpenAI = async () => {
     }
 
     const { apiKey } = await response.json();
+    console.log('OpenAI API Key erfolgreich abgerufen');
     
-    if (!apiKey || !apiKey.startsWith('sk-')) {
-      throw new Error('Ungültiger OpenAI API Key');
-    }
-
     openaiInstance = new OpenAI({
       apiKey: apiKey,
       dangerouslyAllowBrowser: true
@@ -28,12 +25,12 @@ const initializeOpenAI = async () => {
     return openaiInstance;
   } catch (error) {
     console.error('Fehler beim Initialisieren von OpenAI:', error);
-    throw new Error('OpenAI API Key nicht korrekt konfiguriert');
+    throw error;
   }
 };
 
 export const handleChatRequest = async (message, supplements, symptoms) => {
-  console.log('Processing chat request:', { message, supplements, symptoms });
+  console.log('Verarbeite Chat-Anfrage:', { message, supplements, symptoms });
 
   try {
     if (!openaiInstance) {
@@ -58,13 +55,10 @@ export const handleChatRequest = async (message, supplements, symptoms) => {
       max_tokens: 500,
     });
 
-    console.log('OpenAI response received:', response);
+    console.log('OpenAI Antwort erhalten:', response);
     return response.choices[0].message.content;
   } catch (error) {
-    console.error('Error in chat request:', error);
-    if (error.response) {
-      console.error('OpenAI API Error:', error.response.data);
-    }
-    throw new Error('Fehler bei der Kommunikation mit dem KI-Assistenten');
+    console.error('Fehler bei der Chat-Anfrage:', error);
+    throw error;
   }
 };
