@@ -26,7 +26,42 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/symplytra
   useUnifiedTopology: true
 });
 
-// Routes
+// Original Terminal Endpoint (für bestehende Projekte)
+app.post('/api/terminal/execute', (req, res) => {
+  const { command } = req.body;
+  
+  if (!command) {
+    return res.status(400).json({ error: 'Kein Befehl angegeben' });
+  }
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      return res.status(500).json({ 
+        error: error.message,
+        stderr: stderr
+      });
+    }
+    
+    res.json({
+      stdout: stdout,
+      stderr: stderr
+    });
+  });
+});
+
+// Original Health Check (für bestehende Projekte)
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    services: {
+      api: true,
+      websocket: true
+    }
+  });
+});
+
+// Neue Routen für SymplyTrack
 app.use('/api', healthRoutes);
 app.use('/api/terminal', terminalRoutes);
 app.use('/api/auth', authRoutes);
