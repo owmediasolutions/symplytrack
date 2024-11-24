@@ -2,9 +2,9 @@ import OpenAI from 'openai';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-if (!apiKey || !apiKey.startsWith('sk-')) {
-  console.error('OpenAI API Key fehlt oder ist ungültig. Bitte stellen Sie sicher, dass die .env Datei einen gültigen VITE_OPENAI_API_KEY enthält.');
-  throw new Error('OpenAI API Key nicht korrekt konfiguriert. Der Key muss mit "sk-" beginnen.');
+if (!apiKey) {
+  console.error('OpenAI API Key fehlt oder ist nicht korrekt konfiguriert. Bitte .env Datei mit einem gültigen VITE_OPENAI_API_KEY erstellen.');
+  throw new Error('OpenAI API Key nicht korrekt konfiguriert');
 }
 
 const openai = new OpenAI({
