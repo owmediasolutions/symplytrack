@@ -1,6 +1,16 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUpIcon, UsersIcon, DollarSignIcon, FolderIcon, ZapIcon, BrainIcon, RocketIcon, ClockIcon } from "lucide-react";
+import { 
+  TrendingUpIcon, 
+  UsersIcon, 
+  DollarSignIcon, 
+  FolderIcon, 
+  ZapIcon, 
+  BrainIcon, 
+  RocketIcon, 
+  ClockIcon,
+  Settings as SettingsIcon 
+} from "lucide-react";
 
 const Index = () => {
   const stats = [
