@@ -2,9 +2,15 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon, UserIcon } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { navItems } from "@/nav-items";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -76,18 +82,25 @@ const DashboardLayout = ({ children }) => {
             >
               <MenuIcon className="h-5 w-5" />
             </Button>
-            <div className="ml-auto flex items-center gap-4">
-              <Button variant="ghost" size="sm">
-                Profil
-              </Button>
+            <div className="ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <UserIcon className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="cursor-not-allowed opacity-50">
+                    Profil (Coming Soon)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="container py-6 animate-fade-in">
-          {children}
-        </main>
+        <main className="container py-6">{children}</main>
       </div>
     </div>
   );

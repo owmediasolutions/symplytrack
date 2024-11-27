@@ -21,7 +21,6 @@ const ChatAssistant = ({ supplements, symptoms }) => {
 
     try {
       const response = await handleChatRequest(userMessage, supplements, symptoms);
-      console.log('Chat response received:', response);
       setMessages((prev) => [...prev, { role: "assistant", content: response }]);
     } catch (error) {
       console.error('Chat error:', error);
@@ -32,10 +31,8 @@ const ChatAssistant = ({ supplements, symptoms }) => {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold mb-4">KI-Assistent</h2>
-      
-      <ScrollArea className="h-[400px] border rounded-lg p-4">
+    <div className="max-w-4xl mx-auto">
+      <ScrollArea className="h-[600px] border rounded-lg p-4 mb-4">
         <div className="space-y-4">
           {messages.map((msg, idx) => (
             <div
