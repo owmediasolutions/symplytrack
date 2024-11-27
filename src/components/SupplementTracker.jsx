@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-const SupplementTracker = ({ supplements, setSupplements }) => {
+const SupplementTracker = () => {
+  const [supplements, setSupplements] = useState([]);
   const [name, setName] = useState("");
   const [dose, setDose] = useState("");
   const [unit, setUnit] = useState("mg");

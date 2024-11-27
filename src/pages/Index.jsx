@@ -9,12 +9,10 @@ const Index = () => {
       
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Supplements</h2>
           <SupplementTracker />
         </Card>
         
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Symptome</h2>
           <SymptomTracker />
         </Card>
       </div>
