@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   HomeIcon, UsersIcon, FileTextIcon, BarChart3Icon, MessageCircleIcon,
   SettingsIcon, HelpCircleIcon, FolderIcon, Zap, DatabaseIcon, GlobeIcon,
-  ShieldIcon, SunIcon, MoonIcon, MenuIcon, UserIcon
+  ShieldIcon, SunIcon, MoonIcon, MenuIcon, UserIcon, Languages
 } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import {
@@ -105,7 +105,7 @@ const DashboardLayout = ({ children }) => {
               </Button>
               
               <Button variant="ghost" size="icon">
-                <LanguageIcon className="h-5 w-5" />
+                <Languages className="h-5 w-5" />
               </Button>
 
               <DropdownMenu>
