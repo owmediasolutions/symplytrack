@@ -38,13 +38,22 @@ export const handleChatRequest = async (message, supplements, symptoms) => {
     }
 
     const response = await openaiInstance.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `Du bist ein hilfreicher Assistent für Gesundheit und Nahrungsergänzungsmittel. 
+          content: `Du bist ein medizinischer Assistent, spezialisiert auf Nahrungsergänzungsmittel und Gesundheit.
+          Deine Aufgabe ist es, fundierte und wissenschaftlich validierte Informationen zu geben.
+          
           Aktuelle Supplements des Nutzers: ${JSON.stringify(supplements)}
-          Aktuelle Symptome: ${JSON.stringify(symptoms)}`
+          Aktuelle Symptome: ${JSON.stringify(symptoms)}
+          
+          Wichtige Richtlinien:
+          - Gib nur wissenschaftlich belegte Informationen
+          - Verweise auf Studien wenn möglich
+          - Warne vor möglichen Wechselwirkungen
+          - Bei medizinischen Problemen empfehle einen Arztbesuch
+          - Bleibe sachlich und professionell`
         },
         {
           role: "user",
@@ -52,7 +61,7 @@ export const handleChatRequest = async (message, supplements, symptoms) => {
         }
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 1000,
     });
 
     console.log('OpenAI Antwort erhalten:', response);
