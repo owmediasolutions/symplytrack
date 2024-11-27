@@ -5,7 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
-const SymptomTracker = ({ symptoms, setSymptoms }) => {
+const SymptomTracker = () => {
+  const [symptoms, setSymptoms] = useState([]);
   const [symptom, setSymptom] = useState("");
   const [intensity, setIntensity] = useState([5]);
 
